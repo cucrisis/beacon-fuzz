@@ -21,7 +21,7 @@
 // python venv containing dependencies
 #error PY_SPEC_VENV_PATH undefined
 #endif
-// TODO(gnattishness) re-enable when TRINITY supports v0.10.1
+// TODO(gnattishness) re-enable when TRINITY supports v0.11.1
 // #ifndef TRINITY_HARNESS_PATH
 // #error TRINITY_HARNESS_PATH undefined
 // #endif

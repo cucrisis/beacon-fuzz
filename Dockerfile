@@ -19,9 +19,10 @@ RUN git clone --branch fuzzing --depth 1 https://github.com/gnattishness/cpython
 # TODO use tag when possible
 # This is a tag, so fine to always cache
 #RUN git clone --branch XXX --depth 1 https://github.com/sigp/lighthouse lighthouse
-RUN git clone --branch master https://github.com/sigp/lighthouse lighthouse && cd lighthouse && git checkout 784997b09bc7c49de9b3ddb5b11680549d577523
+# NOTE: latest master, can keep getting bumped while compatible
+RUN git clone --branch master https://github.com/sigp/lighthouse lighthouse && cd lighthouse && git checkout ad5bd6412a972f519053005ec1dbf228844bbfe7
 
-# RUN git clone --branch master https://github.com/PegaSysEng/teku && cd teku && git checkout d0848be277bbaa23e271927fd60303e3d44246d4 && ./gradlew dependencies --refresh-dependencies
+# RUN git clone --branch master https://github.com/PegaSysEng/teku && cd teku && git checkout 8a99b8e3f9c2e6191940c5f5876370008b77f8f0 && ./gradlew dependencies --refresh-dependencies
 # TODO replace when suitable harnesses are in teku master
 RUN git clone --branch fuzz_utils https://github.com/gnattishness/teku.git && cd teku && ./gradlew installDist -x test --stacktrace
 
