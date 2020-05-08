@@ -52,7 +52,7 @@ extern "C" int LLVMFuzzerInitialize(int* argc, char*** argv) {
   differential->AddModule(
       std::make_shared<fuzzing::NimOp>(fuzzing::config::disable_bls));
   /*differential->AddModule(std::make_shared<fuzzing::Java>(
-      "tech/pegasys/artemis/statetransition/util/FuzzUtil",
+      "tech/pegasys/teku/core/FuzzUtil",
       "fuzzProposerSlashing", BFUZZ_JAVA_CLASSPATH));*/
 
   return 0;
