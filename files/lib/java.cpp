@@ -19,8 +19,7 @@ class Java::Impl {
     // classes to be moved around after compilation
     JavaVMInitArgs vmArgs;
     std::string classPathOption = "-Djava.class.path=" + classPath;
-    // NOTE: leaking this for now, for testing
-    JavaVMOption* options = new JavaVMOption[2];
+    JavaVMOption options[1];
     // do this instead of directly passing the literal, as optionString wants a
     // char* not a const char*
     options[0].optionString = classPathOption.data();
