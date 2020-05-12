@@ -1,38 +1,39 @@
-import os
-import sys
+import importlib
+import typing
 
-from eth2spec.fuzzing.decoder import translate_typ, translate_value
+from eth2spec.config import config_util
 from eth2spec.phase0 import spec
 from eth2spec.utils import bls
 from eth2spec.utils.ssz.ssz_impl import serialize
-from eth2spec.utils.ssz.ssz_typing import uint8, uint32
-from preset_loader import loader
 
 # TODO fix up so not hard-coded
-configs_path = "/eth2/eth2.0-specs/configs"
-# Apply 'mainnet' template
-presets = loader.load_presets(configs_path, "mainnet")
-spec.apply_constants_preset(presets)
+CONFIGS_PATH = "/eth2/eth2.0-specs/configs"
 
 
 VALIDATE_STATE_ROOT = True
 
 
-class BlockTestCase(spec.Container):
-    pre: spec.BeaconState
-    block: spec.SignedBeaconBlock
-
-
-block_sedes = translate_typ(BlockTestCase)
+BlockTestCase = None
 
 
 def FuzzerInit(bls_disabled: bool) -> None:
+    global BlockTestCase
+    config_util.prepare_config(CONFIGS_PATH, "mainnet")
+    importlib.reload(spec)
+
     if bls_disabled:
         bls.bls_active = False
 
+    # NOTE: we need to define the test case after reloading the spec
+    class BlockTestCaseImpl(spec.Container):
+        pre: spec.BeaconState
+        block: spec.SignedBeaconBlock
 
-def FuzzerRunOne(fuzzer_input):
-    state_block = translate_value(block_sedes.deserialize(fuzzer_input), BlockTestCase)
+    BlockTestCase = BlockTestCaseImpl
+
+
+def FuzzerRunOne(input_data: bytes) -> typing.Optional[bytes]:
+    state_block = BlockTestCase.decode_bytes(input_data)
 
     try:
         poststate = spec.state_transition(
@@ -40,6 +41,7 @@ def FuzzerRunOne(fuzzer_input):
             signed_block=state_block.block,
             validate_result=VALIDATE_STATE_ROOT,
         )
-        return serialize(poststate)
     except (AssertionError, IndexError):
         return None
+
+    return serialize(poststate)

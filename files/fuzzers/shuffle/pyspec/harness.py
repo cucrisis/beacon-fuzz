@@ -1,13 +1,15 @@
+import importlib
 import struct
 
+from eth2spec.config import config_util
 from eth2spec.phase0 import spec
 
-# TODO N why are we disabling hash caching here?
-# monkey patch to revert hash caching
-spec.hash = spec._hash
+CONFIGS_PATH = "/eth2/eth2.0-specs/configs"
 
 
 def FuzzerInit(bls_disabled: bool) -> None:
+    config_util.prepare_config(CONFIGS_PATH, "mainnet")
+    importlib.reload(spec)
     # do nothing
     pass
 
